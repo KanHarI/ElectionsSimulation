@@ -129,15 +129,19 @@ def main():
             d._sample[KEY_TO_I[key]] -= 1
         if i % 10000 == 0:
             print(i)
-            print(affected)
-            print(affected_weighted)
+            _affected = {key:(0 if val==0 else i/val) for key, val in affected.items()}
+            print("Affect chance - 1 in:")
+            print(_affected)
+            print("Expected value of voting - 1 in:")
+            _affected_weighted = {key:(0 if val==0 else i/val) for key, val in affected_weighted.items()}
+            print(_affected_weighted)
             print("\n\n")
     print("\n\n\nFinal - the chance of affecting result, multiplying by num of knesset members changed is:")
-    affected = {key:(0 if val==0 else NUM_RUNS/val) for key, val in affected.items()}
-    affected_weighted = {key:(0 if val==0 else NUM_RUNS/val) for key, val in affected_weighted.items()}
-    print(affected)
+    _affected = {key:(0 if val==0 else NUM_RUNS/val) for key, val in affected.items()}
+    _affected_weighted = {key:(0 if val==0 else NUM_RUNS/val) for key, val in affected_weighted.items()}
+    print(_affected)
     print("\n\n\nAnd w.r.t. num of knesset member changed:")
-    print(affected_weighted)
+    print(_affected_weighted)
     return 0
 
 if __name__ == "__main__":
