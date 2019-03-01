@@ -1,38 +1,37 @@
 
 import numpy as np
 
-# Ratios based on random internet polls. updated at 2019-01-18
+# Percents, based on random internet polls. updated at 2019-03-01
+# https://www.israelhayom.co.il/article/637177
 CANDIDATES = {
-    "LIKUD": 33,
-    "YESH_ATID": 13,
-    "HOSEN_LEYISRAEL": 13,
-    "HAMESHUTEFET": 12,
-    "HAYAMIN_HAHADASH": 8,
-    "HAAVODA": 8,
-    "YAHADUT_HATORA": 8,
-    "YISRAEL_BEITENU": 5,
-    "KULANU": 5,
-    "SHAS": 5,
-    "MERETZ": 5,
-    "GESHER": 5,
-    "HABAIT_HAYEHUDI": 4,
-    "HATNUA": 3,
-    "SURPRISE": 2, # ZEHUT\ALE_YAROK\etc.
-    "PETEK_LAVAN": 3,
-    None: 36, # non-voting. based upon voting percent in 2013&2015
+    "KAHOL_LAVAN": 18.6,
+    "LIKUD": 13.7,
+    "HABAIT_HAYEHUDI": 4.9,
+    "HAYAMIN_HAHADASH": 4.2,
+    "MERETZ": 3.5,
+    "HAAVODA": 3.5,
+    "YAHADUT_HATORA": 3.5,
+    "TAAL_HADASH": 3.5,
+    "SHAS": 2.8,
+    "ZEHUT": 2.1,
+    "KULANU": 2.1,
+    "GESHER": 1.4,
+    "YISRAEL_BEITENU": 1.4,
+    "RAAM_BALAD": 0.7,
+    "PETEK_LAVAN": 2.1, # Based upon percent in 2013 & 2015
+    None: 30, # non-voting. Based upon voting percent in 2013 & 2015
 }
 
 # Speculation
 SURPLUS_AGREEMENT = [
-    ("LIKUD", "HAYAMIN_HAHADASH"),
-    ("YESH_ATID", "HOSEN_LEYISRAEL"),
-    ("HAAVODA", "MERETZ"),
+    ("KAHOL_LAVAN", "HAAVODA"),
+    ("LIKUD", "HABAIT_HAYEHUDI"),
+    ("HAYAMIN_HAHADASH", "ZEHUT"),
+    ("MERETZ", "TAAL_HADASH"),
     ("YAHADUT_HATORA", "SHAS"),
-    ("YISRAEL_BEITENU", "HABAIT_HAYEHUDI"),
     ("KULANU", "GESHER"),
-    ("HAMESHUTEFET",),
-    ("HATNUA",),
-    ("SURPRISE",),
+    ("YISRAEL_BEITENU",),
+    ("RAAM_BALAD",),
 ]
 
 I_TO_KEY = dict()
@@ -132,17 +131,26 @@ def main():
             _affected = {key:(0 if val==0 else i/val) for key, val in affected.items()}
             print("Affect chance - 1 in:")
             print(_affected)
-            print("Expected value of voting - 1 in:")
-            _affected_weighted = {key:(0 if val==0 else i/val) for key, val in affected_weighted.items()}
+            print("Expected value of voting in mandates:")
+            _affected_weighted = {key:(0 if val==0 else val/i) for key, val in affected_weighted.items()}
             print(_affected_weighted)
             print("\n\n")
-    print("\n\n\nFinal - the chance of affecting result, multiplying by num of knesset members changed is:")
+    print("\n\n\nFinal - the chance of affecting result:")
     _affected = {key:(0 if val==0 else NUM_RUNS/val) for key, val in affected.items()}
-    _affected_weighted = {key:(0 if val==0 else NUM_RUNS/val) for key, val in affected_weighted.items()}
+    _affected_weighted = {key:(0 if val==0 else val/NUM_RUNS) for key, val in affected_weighted.items()}
     print(_affected)
-    print("\n\n\nAnd w.r.t. num of knesset member changed:")
+    print("\n\n\nVoting utility in mandates:")
     print(_affected_weighted)
     return 0
 
 if __name__ == "__main__":
     exit(main())
+Voting utility in mandates:
+
+# Output:
+# {'KAHOL_LAVAN': 0.00011, 'LIKUD': 0.000102, 'HABAIT_HAYEHUDI': 0.000158,
+#  'HAYAMIN_HAHADASH': 0.000112, 'MERETZ': 0.000178, 'HAAVODA': 0.000152,
+#  'YAHADUT_HATORA': 0.000126, 'TAAL_HADASH': 0.000144, 'SHAS': 0.000126,
+#  'ZEHUT': 0.00014, 'KULANU': 0.00013, 'GESHER': 0.000104,
+#  'YISRAEL_BEITENU': 7.8e-05, 'RAAM_BALAD': 5.8e-05,
+#  'PETEK_LAVAN': 3.2e-05, None: 0}
