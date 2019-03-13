@@ -1,7 +1,5 @@
 
-import argparse
 import numpy as np
-from constants import DEFAULT_NUM_ITERATIONS, DEFAULT_PRINT_INTERVAL, DEFAULT_CONSTANT_DRIFT, DEFAULT_RELATIVE_DRIFT
 from configuration import NUM_LEGAL_VOTERS, CANDIDATES, SURPLUS_AGREEMENT
 
 
@@ -78,64 +76,3 @@ to polling resolution of a single knesset member.\n\n""")
             mandates[idx[np.argmax(individual_cost)]] += 1
 
         return mandates
-
-def main(args):
-    d = Simulation(args.constant_drift, args.relative_drift)
-    affected = {key: 0 for key in CANDIDATES.keys()}
-    affected_weighted = {key: 0 for key in CANDIDATES.keys()}
-    for i in range(args.num_iterations):
-        if not (args.disable_drift):
-            d.random_drift()
-        d.sample(NUM_LEGAL_VOTERS)
-        mandates = d.mandates()
-        for key in CANDIDATES.keys():
-            if key == None:
-                continue # Non-voters are not part of the results
-            d._sample[KEY_TO_I[key]] += 1
-            delta = np.sum(np.abs(mandates - d.mandates()))
-            if delta:
-                affected[key] += 1
-                affected_weighted[key] += delta
-            d._sample[KEY_TO_I[key]] -= 1
-        if i % args.print_interval == 0:
-            print(i)
-            _affected = {key:(0 if val==0 else i/val) for key, val in affected.items()}
-            print("Affect chance - 1 in:")
-            print(_affected)
-            print("Expected value of voting in mandates:")
-            _affected_weighted = {key:(0 if val==0 else val/i) for key, val in affected_weighted.items()}
-            print(_affected_weighted)
-            print("\n\n")
-    print("\n\n\nFinal - the chance of affecting result:")
-    _affected = {key:(0 if val==0 else NUM_RUNS/val) for key, val in affected.items()}
-    _affected_weighted = {key:(0 if val==0 else val/NUM_RUNS) for key, val in affected_weighted.items()}
-    print(_affected)
-    print("\n\n\nVoting utility in mandates:")
-    print(_affected_weighted)
-    return 0
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--num-iterations", type=int, default=DEFAULT_NUM_ITERATIONS,
-        help="Number of simulation iterations. Defualt: {0}".format(DEFAULT_NUM_ITERATIONS))
-    parser.add_argument("--print-interval", type=int, default=DEFAULT_PRINT_INTERVAL,
-        help="Print aggregated information once in this many iterations. Defualt: {0}".format(DEFAULT_PRINT_INTERVAL))
-    parser.add_argument("--disable-drift", action="store_true",
-        help="Without this parameter, random drift will be applied to voting percets of each party in each iteration")
-    parser.add_argument("--constant-drift", type=float, default=DEFAULT_CONSTANT_DRIFT,
-        help="The standard diviation of a random value added to or substracted from the"+\
-            " percent of voters voting for each party. Defualt: {0}".format(DEFAULT_CONSTANT_DRIFT))
-    parser.add_argument("--relative-drift", type=float, default=DEFAULT_RELATIVE_DRIFT,
-        help="The standard diviation of a random value added to or substracted from the"+\
-        " percent of voters voting for each party, in a logarithmic scale. Defualt: {0}".format(DEFAULT_RELATIVE_DRIFT))
-    args = parser.parse_args()
-    exit(main(args))
-
-# Voting utility in mandates:
-# Output:
-# {'KAHOL_LAVAN': 0.00011, 'LIKUD': 0.000102, 'HABAIT_HAYEHUDI': 0.000158,
-#  'HAYAMIN_HAHADASH': 0.000112, 'MERETZ': 0.000178, 'HAAVODA': 0.000152,
-#  'YAHADUT_HATORA': 0.000126, 'TAAL_HADASH': 0.000144, 'SHAS': 0.000126,
-#  'ZEHUT': 0.00014, 'KULANU': 0.00013, 'GESHER': 0.000104,
-#  'YISRAEL_BEITENU': 7.8e-05, 'RAAM_BALAD': 5.8e-05,
-#  'PETEK_LAVAN': 3.2e-05, None: 0}
