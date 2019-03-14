@@ -1,36 +1,30 @@
 
-# Number based upon linear trend from 2013&2015 elections
-NUM_LEGAL_VOTERS = 5500000
+import json
+import numpy as np
 
-# Percents, based on random internet polls. updated at 2019-03-01
-# https://www.israelhayom.co.il/article/637177
-CANDIDATES = {
-    "KAHOL_LAVAN": 18.6,
-    "LIKUD": 13.7,
-    "HABAIT_HAYEHUDI": 4.9,
-    "HAYAMIN_HAHADASH": 4.2,
-    "MERETZ": 3.5,
-    "HAAVODA": 3.5,
-    "YAHADUT_HATORA": 3.5,
-    "TAAL_HADASH": 3.5,
-    "SHAS": 2.8,
-    "ZEHUT": 2.1,
-    "KULANU": 2.1,
-    "GESHER": 1.4,
-    "YISRAEL_BEITENU": 1.4,
-    "RAAM_BALAD": 0.7,
-    "PETEK_LAVAN": 2.1, # Based upon percent in 2013 & 2015
-    None: 30, # non-voting. Based upon voting percent in 2013 & 2015
-}
+class Configuration:
+    def __init__(self, json_path):
+        with open(json_path) as json_file:
+            commentless_content = '\n'.join(map(lambda x: x[:x.find('//')], json_file.readlines()))
+            conf = json.loads(commentless_content)
+            self._conf = conf
 
-# Speculation
-SURPLUS_AGREEMENT = [
-    ("KAHOL_LAVAN", "HAAVODA"),
-    ("LIKUD", "HABAIT_HAYEHUDI"),
-    ("HAYAMIN_HAHADASH", "ZEHUT"),
-    ("MERETZ", "TAAL_HADASH"),
-    ("YAHADUT_HATORA", "SHAS"),
-    ("KULANU", "GESHER"),
-    ("YISRAEL_BEITENU",),
-    ("RAAM_BALAD",),
-]
+        self.num_mandates = conf["NUM_MANDATES"]
+        self.threshold = conf["AHUZ_HAHASIMA"]
+        self.num_voters = conf["NUM_LEGAL_VOTERS"]
+        self.constant_drift = conf["CONSTANT_DRIFT"]
+        self.relative_drift = conf["RELATIVE_DRIFT"]
+        self.candidates_support = conf["CANDIDATES"]
+        self.i_to_key = dict()
+        for i, key in enumerate(self.candidates_support.keys()):
+            self.i_to_key[i] = key
+        self.key_to_i = {v: k for k, v in self.i_to_key.items()}
+        self.surplus_agreement = conf["SURPLUS_AGREEMENT"]
+
+        # This matrix contains a row for each party participating in the elections,
+        # and a column for each set of parites  in a surplus agreement.
+        # Whenever a party is part of a surplus agreement, there is a '1'. othrewise, '0'.
+        self.surplus_matrix = np.zeros((len(self.candidates_support)-1, len(self.surplus_agreement)), dtype=np.int16)
+        for i, participants in enumerate(self.surplus_agreement):
+            for participant in participants:
+                self.surplus_matrix[self.key_to_i[participant], i] = 1

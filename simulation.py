@@ -1,78 +1,86 @@
 
 import numpy as np
-from configuration import NUM_LEGAL_VOTERS, CANDIDATES, SURPLUS_AGREEMENT
-
-
-
-I_TO_KEY = dict()
-KEY_TO_I = dict()
-for i, key in enumerate(CANDIDATES.keys()):
-    I_TO_KEY[i] = key
-    KEY_TO_I[key] = i
-
-SURPLUS_AGREEMENT_I = list()
-for item in SURPLUS_AGREEMENT:
-    SURPLUS_AGREEMENT_I.append(tuple(map(lambda x: KEY_TO_I[x], item)))
-
-SURPLUS_MATRIX = np.zeros((len(CANDIDATES)-2, len(SURPLUS_AGREEMENT)), dtype=np.int16)
-for i in range(len(SURPLUS_AGREEMENT_I)):
-    for j in SURPLUS_AGREEMENT_I[i]:
-        SURPLUS_MATRIX[j,i] = 1
-
-
-AHUZ_HAHASIMA = 4
-NUM_MANDATES = 120
 
 class Simulation:
-    def __init__(self, constant_variance, relative_variance):
-        self.base_dist = {i: float(j) for i, j in CANDIDATES.items()}
-        self.constant_variance = constant_variance
-        self.relative_variance = relative_variance
+    def __init__(self, conf):
+        # Create basic support fractions of different parties
+        self.base_dist = np.array([float(conf.candidates_support[conf.i_to_key[i]]) \
+            for i in range(len(conf.candidates_support.keys()))], dtype=np.float)
+        
+        # Renormalize (Sum to 1)
+        self.base_dist /= np.sum(self.base_dist)
+        self.constant_variance = conf.constant_drift
+        self.relative_variance = conf.relative_drift
+        self.threshold = conf.threshold
+        self.num_mandates = conf.num_mandates
+        self.surplus_matrix = conf.surplus_matrix
         self.distribution = None
         self._sample = None
 
     def random_drift(self):
-        constant_drift = np.random.normal(0.0, self.constant_variance, (len(self.base_dist),))
-        relative_drift = np.random.normal(0.0, self.relative_variance, (len(self.base_dist),))
-        self.distribution = dict()
-        for i, key in enumerate(self.base_dist.keys()):
-            self.distribution[key] = max(self.base_dist[key]*np.exp(relative_drift[i]) + constant_drift[i], 0)
+        constant_drift = np.random.normal(0.0, self.constant_variance, (self.base_dist.shape[0],))
+        relative_drift = np.random.normal(0.0, self.relative_variance, (self.base_dist.shape[0],))
+        self.distribution = np.maximum(self.base_dist*np.exp(relative_drift) + constant_drift, 0)
+        
+        if np.sum(self.distribution[:-1]) == 0:
+            # Rarely, the whole distribution can become negative due to noise
+            # we solve those cases by retrying the random drift...
+            return self.random_drift()
+        
+        self.distribution /= np.sum(self.distribution)
         return self.distribution
 
     def sample(self, num_voters):
         if self.distribution is None:
-            print("""\n\nWarning: sampling without drift!
-this can lead into weired behaviours as voters distribution is alligned
-to polling resolution of a single knesset member.\n\n""")
             self.distribution = self.base_dist
-        pvals = []
-        for i, key in enumerate(self.distribution.keys()):
-            pvals.append(self.distribution[key])
-        pvals = np.array(pvals)
-        pvals /= np.sum(pvals)
-        result = np.random.multinomial(NUM_LEGAL_VOTERS, pvals, 1)[0]
-        result = result[:KEY_TO_I[None]]
+        
+        # Get a multinomial distribution sample of votes
+        _result = np.random.multinomial(num_voters, self.distribution, 1)[0]
+
+        # Remove illegal votes and non-voters
+        result = _result[:-1]
         self._sample = result
         return result
 
     def mandates(self):
         if self.sample is None:
             raise Exception("Cannot distribute mandes without sampling voters!")
-        mandates = self._sample/np.sum(self._sample)*NUM_MANDATES
-        mandates = mandates.astype(np.int16)
-        mandates = mandates * (mandates >= AHUZ_HAHASIMA)
-        mandates = mandates[:KEY_TO_I["PETEK_LAVAN"]]
-        surplus_matrix = SURPLUS_MATRIX
-        surplus_matrix = (surplus_matrix.T * (mandates > 0)).T
+        
+        # Find support fraction for every party
+        mandates = self._sample/np.sum(self._sample)
+        
+        # Apply threshold
+        threshold_sample = self._sample * (mandates > self.threshold)
+        mandates *= (mandates > self.threshold)
 
-        # Bader-offer
-        spare_mandates = NUM_MANDATES - np.sum(mandates)
-        jointvoters = self._sample[:KEY_TO_I["PETEK_LAVAN"]].dot(surplus_matrix)
+        # Renormalize distribution after removing below-threshold parties
+        mandates /= np.sum(mandates)
+        
+        # Distribute mandates
+        mandates = mandates*self.num_mandates
+        mandates = mandates.astype(np.int16)
+
+        # The Bader-Offer algorithm
+        # Number of spare mandates to split between candidates
+        spare_mandates = self.num_mandates - np.sum(mandates)
+
+        # Find the number of voters for both parties together
+        # exclude voters for parties under the threshold
+        jointvoters = threshold_sample.dot(self.surplus_matrix)
         for mandate in range(spare_mandates):
-            jointmandates = mandates.dot(surplus_matrix)
+            # Find sum of mandates of both lists
+            jointmandates = mandates.dot(self.surplus_matrix)
+
+            # Find the cost (voters per mandates) of each set of parties
             jointcost = jointvoters/(jointmandates+1)
-            idx = np.nonzero(surplus_matrix[:,np.argmax(jointcost)])[0]
-            individual_cost = self._sample[idx]/(mandates[idx] + 1)
+
+            # Find the parties with maximal voters to mandates ratio
+            idx = np.nonzero(self.surplus_matrix[:,np.argmax(jointcost)])[0]
+
+            # Find the ratio of each party in the set
+            individual_cost = threshold_sample[idx]/(mandates[idx] + 1)
+
+            # Award winning party an extra mandate
             mandates[idx[np.argmax(individual_cost)]] += 1
 
         return mandates

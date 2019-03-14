@@ -1,0 +1,52 @@
+{
+    "NUM_MANDATES": 120,
+    "AHUZ_HAHASIMA": 0.0325,
+
+    // Number based upon linear trend from 2013&2015 elections
+    "NUM_LEGAL_VOTERS": 5500000,
+
+    // The standard diviation of a random value added to or substracted from the
+    // fraction of voters voting for each party. Default is 1 percent
+    "CONSTANT_DRIFT": 0.015,
+
+    // The standard diviation of a random value added to or substracted from the
+    // percent of voters voting for each party, in a logarithmic scale
+    "RELATIVE_DRIFT": 0.2,
+    
+    // Based on random internet polls. updated at 2019-03-01
+    // This will be renormalized later summing to 1, so no need
+    // to stick to either percents/knesset members/fraction of voters
+    // https://bechirot21.bechirot.gov.il/election/Decisions/Documents/%D7%A1%D7%A7%D7%A8%D7%99%D7%9D/%D7%A1%D7%A7%D7%A8%20%D7%91%D7%97%D7%99%D7%A8%D7%95%D7%AA%20%D7%A2%D7%91%D7%95%D7%A8%20%D7%99%D7%93%D7%99%D7%A2%D7%95%D7%AA%20%D7%9E%D7%9B%D7%95%D7%9F%20%D7%9E%D7%93%D7%92%D7%9D%2010-3-2019.pdf
+    "CANDIDATES": {
+        "KAHOL_LAVAN": 23.7,
+        "LIKUD": 20.9,
+        "HAAVODA": 7.2,
+        "TAAL_HADASH": 5.1,
+        "YAHADUT_HATORA": 5.0,
+        "HABAIT_HAYEHUDI": 4.4,
+        "SHAS": 4.3,
+        "MERETZ": 3.6,
+        "HAYAMIN_HAHADASH": 3.6,
+        "ZEHUT": 3.1,
+        "YISRAEL_BEITENU": 3.0,
+        "RAAM_BALAD": 2.9,
+        "KULANU": 2.9,
+        "GESHER": 2.0,
+
+        // Based upon percent in 2013 & 2015
+        // Aggregation of non voters, empty votes and invalid votes
+        "NONE": 30
+    },
+    
+    // Speculation
+    "SURPLUS_AGREEMENT": [
+        ["KAHOL_LAVAN", "HAAVODA"],
+        ["LIKUD", "HABAIT_HAYEHUDI"],
+        ["HAYAMIN_HAHADASH", "ZEHUT"],
+        ["MERETZ", "TAAL_HADASH"],
+        ["YAHADUT_HATORA", "SHAS"],
+        ["KULANU", "GESHER"],
+        ["YISRAEL_BEITENU"],
+        ["RAAM_BALAD"]
+    ]
+}
