@@ -1,7 +1,37 @@
+
+============================================================================
+ > py -3 -m main --num-iterations 2000000
+Final - the chance of affecting result:
+{'KAHOL_LAVAN': 35087.71929824561, 'LIKUD': 28985.507246376812, 'HAAVODA': 22988.505747126437, 'TAAL_HADASH': 25316.45569620253, 'YAHADUT_HATORA': 23529.41176470588, 'HABAIT_HAYEHUDI': 22727.272727272728, 'SHAS': 31746.031746031746, 'MERETZ': 24691.35802469136, 'HAYAMIN_HAHADASH': 35714.28571428572, 'ZEHUT': 46511.62790697674, 'YISRAEL_BEITENU': 55555.555555555555, 'RAAM_BALAD': 71428.57142857143, 'KULANU': 50000.0, 'GESHER': 50000.0, 'NONE': 0}
+
+
+
 Voting utility in mandates:
-{'KAHOL_LAVAN': 0.00011, 'LIKUD': 0.000102, 'HABAIT_HAYEHUDI': 0.000158,
- 'HAYAMIN_HAHADASH': 0.000112, 'MERETZ': 0.000178, 'HAAVODA': 0.000152,
- 'YAHADUT_HATORA': 0.000126, 'TAAL_HADASH': 0.000144, 'SHAS': 0.000126,
- 'ZEHUT': 0.00014, 'KULANU': 0.00013, 'GESHER': 0.000104,
- 'YISRAEL_BEITENU': 7.8e-05, 'RAAM_BALAD': 5.8e-05,
- 'PETEK_LAVAN': 3.2e-05, None: 0}
+{'KAHOL_LAVAN': 6.6e-05, 'LIKUD': 7.8e-05, 'HAAVODA': 9.6e-05, 'TAAL_HADASH': 0.0001, 'YAHADUT_HATORA': 0.000115, 'HABAIT_HAYEHUDI': 0.000112, 'SHAS': 8.7e-05, 'MERETZ': 0.000124, 'HAYAMIN_HAHADASH': 9.8e-05, 'ZEHUT': 7.6e-05, 'YISRAEL_BEITENU': 7.8e-05, 'RAAM_BALAD': 5.5e-05, 'KULANU': 8.5e-05, 'GESHER': 8.5e-05, 'NONE': 0}
+
+
+
+
+===========================================================================
+ > py -3 -m main --conf-json fake_pessimistic.json --num-iterations 1000000
+Final - the chance of affecting result:
+{'KAHOL_LAVAN': 0, 'LIKUD': 0, 'HAAVODA': 0, 'YAHADUT_HATORA': 0, 'HABAIT_HAYEHUDI': 0, 'SHAS': 0, 'NONE': 0}
+
+
+
+Voting utility in mandates:
+{'KAHOL_LAVAN': 0, 'LIKUD': 0, 'HAAVODA': 0, 'YAHADUT_HATORA': 0, 'HABAIT_HAYEHUDI': 0, 'SHAS': 0, 'NONE': 0}
+
+
+
+
+
+=========================================================================
+ > py -3 -m main --conf-json fake_optimistic.json --num-iterations 200000
+Final - the chance of affecting result:
+{'KAHOL_LAVAN': 2352.9411764705883, 'LIKUD': 2469.135802469136, 'HAAVODA': 2380.9523809523807, 'TAAL_HADASH': 0, 'YAHADUT_HATORA': 2272.7272727272725, 'HABAIT_HAYEHUDI': 2272.7272727272725, 'SHAS': 2500.0, 'NONE': 0}
+
+
+
+Voting utility in mandates:
+{'KAHOL_LAVAN': 0.00085, 'LIKUD': 0.00081, 'HAAVODA': 0.00084, 'TAAL_HADASH': 0, 'YAHADUT_HATORA': 0.00088, 'HABAIT_HAYEHUDI': 0.00088, 'SHAS': 0.0008, 'NONE': 0}

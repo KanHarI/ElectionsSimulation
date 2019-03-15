@@ -1,0 +1,27 @@
+{
+    "NUM_MANDATES": 120,
+    "AHUZ_HAHASIMA": 0.0325,
+
+    "NUM_LEGAL_VOTERS": 5500000,
+
+    "CONSTANT_DRIFT": 0.0,
+
+    "RELATIVE_DRIFT": 0.0,
+    
+    "CANDIDATES": {
+        "KAHOL_LAVAN": 1,
+        "LIKUD": 1,
+        "HAAVODA": 1,
+        "YAHADUT_HATORA": 1,
+        "HABAIT_HAYEHUDI": 1,
+        "SHAS": 1,
+
+        "NONE": 2
+    },
+    
+    "SURPLUS_AGREEMENT": [
+        ["KAHOL_LAVAN", "HAAVODA"],
+        ["LIKUD", "HABAIT_HAYEHUDI"],
+        ["YAHADUT_HATORA", "SHAS"]
+    ]
+}
