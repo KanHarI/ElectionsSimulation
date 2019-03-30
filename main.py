@@ -2,6 +2,7 @@
 import argparse
 import numpy as np
 
+from tqdm import tqdm
 from simulation import Simulation
 from configuration import Configuration
 
@@ -9,12 +10,32 @@ from constants import DEFAULT_NUM_ITERATIONS, DEFAULT_PRINT_INTERVAL, DEAULE_CON
 import json
 
 
+def predict(args, d, conf):
+    results = []
+    for i in tqdm(range(args.num_iterations)):
+        if not (args.disable_drift):
+            d.random_drift()
+        d.sample(conf.num_voters)
+        mandates = d.mandates()
+        results.append(mandates)
+    results = np.array(results)
+    for i in range(results.shape[1]):
+        key = conf.i_to_key[i]
+        results_of_party = results[:,i]
+        print("{key}: mean: {mean}, var: {var}".format(key=key, mean=results_of_party.mean(), var=np.std(results_of_party)))
+    return 0
+
+
 def main(args):
     conf = Configuration(args.conf_json)
     d = Simulation(conf)
+
+    if args.predict:
+        return(predict(args, d, conf))
     
     affected = {key: 0 for key in conf.candidates_support.keys()}
     affected_weighted = {key: 0 for key in conf.candidates_support.keys()}
+
     
     for i in range(args.num_iterations):
         if not (args.disable_drift):
@@ -57,6 +78,11 @@ if __name__ == "__main__":
         help="Without this parameter, random drift will be applied to voting percets of each party in each iteration")
     parser.add_argument("--conf-json", type=str, default=DEAULE_CONFIGURATION_JSON,
         help="Json file with configuration for simulation. Default: {0}".format(DEAULE_CONFIGURATION_JSON))
+    actions = parser.add_mutually_exclusive_group()
+    actions.add_argument("--predict", action="store_true",
+        help="Calculte standard diviation and mean of every party mandates count")
+    actions.add_argument("--calculate_utility", action="store_true",
+        help="Calculte utility of a single vote")
     args = parser.parse_args()
     if args.disable_drift:
         print("""\n\nWarning: sampling without drift!
