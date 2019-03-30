@@ -5,4 +5,4 @@ Install prerequisits by:
 
 Run `py -3 -m main` in the current folder to run simulation.
 
-run `examples\see_value_of_surplus_agreement.bat` on windows machine to compare 
+Run `examples\see_value_of_surplus_agreement.bat` on windows machine to compare mandates distribution between existsing surplus aggrements and a counterfactual of a surplus agreement between ZEHUT and KAHOL-LAVAN.
