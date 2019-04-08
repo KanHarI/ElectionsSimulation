@@ -1,5 +1,5 @@
 
-============================================================================
+=========================================================================
  > py -3 -m main --num-iterations 2000000
 Final - the chance of affecting result:
 {'KAHOL_LAVAN': 35087.71929824561, 'LIKUD': 28985.507246376812, 'HAAVODA': 22988.505747126437, 'TAAL_HADASH': 25316.45569620253, 'YAHADUT_HATORA': 23529.41176470588, 'HABAIT_HAYEHUDI': 22727.272727272728, 'SHAS': 31746.031746031746, 'MERETZ': 24691.35802469136, 'HAYAMIN_HAHADASH': 35714.28571428572, 'ZEHUT': 46511.62790697674, 'YISRAEL_BEITENU': 55555.555555555555, 'RAAM_BALAD': 71428.57142857143, 'KULANU': 50000.0, 'GESHER': 50000.0, 'NONE': 0}
@@ -12,7 +12,7 @@ Voting utility in mandates:
 
 
 
-===========================================================================
+=========================================================================
  > py -3 -m main --conf-json fake_pessimistic.json --num-iterations 1000000
 Final - the chance of affecting result:
 {'KAHOL_LAVAN': 0, 'LIKUD': 0, 'HAAVODA': 0, 'YAHADUT_HATORA': 0, 'HABAIT_HAYEHUDI': 0, 'SHAS': 0, 'NONE': 0}
@@ -35,3 +35,16 @@ Final - the chance of affecting result:
 
 Voting utility in mandates:
 {'KAHOL_LAVAN': 0.00085, 'LIKUD': 0.00081, 'HAAVODA': 0.00084, 'TAAL_HADASH': 0, 'YAHADUT_HATORA': 0.00088, 'HABAIT_HAYEHUDI': 0.00088, 'SHAS': 0.0008, 'NONE': 0}
+
+=========================================================================
+> py -3 -m main --predict-common --conf-json .\config\TransparentPoll-2019.json --num-iterations 1000000
+
+Found 1
+Found 2
+Found 4
+Found 5
+Found 7
+Found 11
+Found 13
+Found 15
+[32 30  5  8  6  9 10  8  0  7  5  0  0  0]: 15

@@ -10,6 +10,28 @@ from constants import DEFAULT_NUM_ITERATIONS, DEFAULT_PRINT_INTERVAL, DEAULE_CON
 import json
 
 
+def predict_common(args, d, conf):
+    import pickle
+    results = {}
+    for i in tqdm(range(args.num_iterations)):
+        if not (args.disable_drift):
+            d.random_drift()
+        d.sample(conf.num_voters)
+        mandates = d.mandates()
+        mandates = pickle.dumps(mandates)
+        if mandates not in results:
+            results[mandates] = 1
+        else:
+            results[mandates] += 1
+    max_freq = 0
+    max_loc = None
+    for j in tqdm(results.keys()):
+        if results[j] > max_freq:
+            max_freq = results[j]
+            max_loc = j
+            print("Found {x}".format(x=max_freq))
+    print("{max_loc}: {max_freq}".format(max_loc=pickle.loads(max_loc), max_freq=max_freq))
+
 def predict(args, d, conf):
     results = []
     for i in tqdm(range(args.num_iterations)):
@@ -32,6 +54,9 @@ def main(args):
 
     if args.predict:
         return(predict(args, d, conf))
+
+    if args.predict_common:
+        return(predict_common(args, d, conf))
     
     affected = {key: 0 for key in conf.candidates_support.keys()}
     affected_weighted = {key: 0 for key in conf.candidates_support.keys()}
@@ -82,6 +107,8 @@ if __name__ == "__main__":
     actions.add_argument("--predict", action="store_true",
         help="Calculte standard diviation and mean of every party mandates count")
     actions.add_argument("--calculate_utility", action="store_true",
+        help="Calculte utility of a single vote")
+    actions.add_argument("--predict-common", action="store_true",
         help="Calculte utility of a single vote")
     args = parser.parse_args()
     if args.disable_drift:

@@ -1,0 +1,50 @@
+{
+    "NUM_MANDATES": 120,
+    "AHUZ_HAHASIMA": 0.0325,
+
+    // Number based upon linear trend from 2013&2015 elections
+    "NUM_LEGAL_VOTERS": 6000000,
+
+    // The standard diviation of a random value added to or substracted from the
+    // fraction of voters voting for each party. Default is 1 percent
+    "CONSTANT_DRIFT": 0.005,
+
+    // The standard diviation of a random value added to or substracted from the
+    // percent of voters voting for each party, in a logarithmic scale
+    "RELATIVE_DRIFT": 0.1,
+    
+    // Based upon the transparent poll, running PartySupport.py from https://github.com/KanHarI/TransparentPollData
+    "CANDIDATES": {
+        "LIKUD": 0.23732855527721172,
+        "KAHOL_LAVAN": 0.22948583169260417,
+        "HABAIT_HAYEHUDI": 0.03793411954403401,
+        "TAAL_HADASH": 0.06198921212684318,
+        "HAYAMIN_HAHADASH": 0.04550839938998856,
+        "HAAVODA": 0.060055132728708514,
+        "ZEHUT": 0.0740210113738258,
+        "YAHADUT_HATORA": 0.06054704164758509,
+        "SHAS": 0.03236976542702527,
+        "MERETZ": 0.05494893269426413,
+        "KULANU": 0.039692639763262934,
+        "RAAM_BALAD": 0.020409690002491057,
+        "GESHER": 0.026993564761760284,
+        "YISRAEL_BEITENU": 0.011331170856923313,
+
+        // Based upon percent in 2013 & 2015
+        // Aggregation of non voters, empty votes and invalid votes
+        "NONE": 0.3
+    },
+    
+    // Speculation
+    "SURPLUS_AGREEMENT": [
+        ["LIKUD", "HABAIT_HAYEHUDI"],
+        ["YAHADUT_HATORA", "SHAS"],
+        ["MERETZ", "HAAVODA"],
+        ["HAYAMIN_HAHADASH", "YISRAEL_BEITENU"],
+        ["RAAM_BALAD", "TAAL_HADASH"],
+        ["KAHOL_LAVAN"],
+        ["ZEHUT"],
+        ["KULANU"],
+        ["GESHER"]
+    ]
+}
